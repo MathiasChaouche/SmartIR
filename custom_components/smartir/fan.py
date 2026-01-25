@@ -104,6 +104,8 @@ class SmartIRFan(FanEntity, RestoreEntity):
         self._speed_list = device_data['speed']
         self._commands = device_data['commands']
 
+        self._skip_redundant_commands = device_data.get('skipRedundantCommands', False)
+
         self._speed = SPEED_OFF
         self._direction = None
         self._last_on_speed = None
@@ -224,10 +226,16 @@ class SmartIRFan(FanEntity, RestoreEntity):
     async def async_set_percentage(self, percentage: int):
         """Set the desired speed for the fan."""
         if (percentage == 0):
-             self._speed = SPEED_OFF
+            new_speed = SPEED_OFF
         else:
-            self._speed = percentage_to_ordered_list_item(
+            new_speed = percentage_to_ordered_list_item(
                 self._speed_list, percentage)
+
+        if self._skip_redundant_commands and new_speed == self._speed:
+            _LOGGER.debug(f"Skipping redundant command: percentage {percentage} is same as current speed {self._speed}.")
+            return
+
+        self._speed = new_speed
 
         if not self._speed == SPEED_OFF:
             self._last_on_speed = self._speed

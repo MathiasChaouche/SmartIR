@@ -3,6 +3,7 @@
   "supportedModels": ["Air purifier"],
   "supportedController": "MQTT",
   "commandsEncoding": "Raw",
+  "skipRedundantCommands": true,
   "speed": ["on"],
   "commands": {
     "off": "{\"ir_code_to_send\": \"A2sI2ALgDQED2gXYAsAB4AML4AsBQB/gBwMBocKAW0AXC6HCawjYAtgC2gXYAg==\"}",
